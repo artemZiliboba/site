@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAMLAVA - Real Letters from Kamchatka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px rgba(239, 68, 68, 0.3); }
+            50% { text-shadow: 0 0 20px rgba(239, 68, 68, 0.7); }
+            100% { text-shadow: 0 0 5px rgba(239, 68, 68, 0.3); }
+        }
+        
+        .modal {
+            transition: all 0.3s ease-out;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .fade-in {
+            animation: fadeIn 1.5s ease-out forwards;
+        }
+        
+        .glow-text {
+            animation: glow 3s infinite;
+        }
+        
+        .volcano-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: float 4s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(-20px) scale(1.2); opacity: 0.8; }
+            100% { transform: translateY(-40px) scale(1.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col items-center justify-center p-4 overflow-x-hidden">
+    <!-- Background elements -->
+    <div id="volcano-dots"></div>
+    
+    <!-- Main content -->
+    <main class="max-w-2xl w-full text-center z-10">
+        <h1 class="text-6xl md:text-8xl font-bold mb-8 glow-text fade-in" style="animation-delay: 0.2s;">KAMLAVA</h1>
+        
+        <p class="text-lg md:text-xl mb-12 leading-relaxed fade-in" style="animation-delay: 0.8s;">
+			Устали от цифрового шума? Уведомления, бесконечные чаты, экраны, светящиеся даже ночью...
+            Мы тонем в потоке информации — мимолётной, безликой, одноразовой. Мы забыли, каково это 
+			— держать в руках что-то настоящее. Что-то, в чём есть тепло. История. Живая душа.
+            Что-то, что не исчезает с обновлением страницы. Что-то, что приходит по-настоящему. Издалека. <br> 
+			Оттуда, где вулканы, ветер и океан ...
+        </p>
+        
+        <button 
+            id="orderBtn"
+            class="bg-amber-700 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 fade-in shadow-lg"
+            style="animation-delay: 1.5s;"
+        >
+            Хочу письмо
+        </button>
+    </main>
+    
+    <!-- Order Modal -->
+    <div id="orderModal" class="modal fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-800 rounded-lg max-w-md w-full p-6 relative border border-amber-700">
+            <button id="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            
+            <h2 class="text-2xl font-bold mb-6 text-amber-500">Письмо с вулканов и ветров</h2>
+            
+            <form id="orderForm" class="space-y-6">
+            
+              <!-- Email -->
+              <div>
+                <label for="email" class="block text-sm font-medium text-white mb-1">Email</label>
+                <input type="email" name="email" id="email" required
+                       class="w-full px-4 py-2 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400" 
+                       placeholder="Твой email ...">
+              </div>
+            
+              <!-- Доп. сообщение -->
+              <div>
+                <label for="message" class="block text-sm font-medium text-white mb-1">Доп. информация <span class="text-gray-400">(необязательно)</span></label>
+                <textarea name="message" id="message" rows="4"
+                          class="w-full px-4 py-2 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                          placeholder="Комментарий ..."></textarea>
+              </div>
+            
+              <!-- Кнопка -->
+              <div class="text-center">
+                <button type="submit"
+                        class="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded transition">
+                  Заказать
+                </button>
+              </div>
+            </form>
+
+
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="modal fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-800 rounded-lg max-w-md w-full p-6 relative border border-amber-700 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-amber-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <h2 class="text-2xl font-bold mb-4 text-amber-500">Готово! Письмо с Камчатки отправляется в путь.</h2>
+            <p class="mb-6">Скоро мы свяжемся с вами и поделимся деталями.</p>
+            <button id="closeSuccessModal" class="bg-amber-700 hover:bg-amber-600 text-white font-bold py-2 px-6 rounded transition duration-300">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Create floating volcano dots
+        function createVolcanoDots() {
+            const container = document.getElementById('volcano-dots');
+            const dotCount = 20;
+            
+            for (let i = 0; i < dotCount; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'volcano-dot';
+                
+                // Random position
+                const left = Math.random() * 100;
+                const bottom = Math.random() * 20;
+                const size = 2 + Math.random() * 3;
+                const delay = Math.random() * 5;
+                const duration = 3 + Math.random() * 4;
+                
+                dot.style.left = `${left}%`;
+                dot.style.bottom = `${bottom}%`;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                dot.style.animationDelay = `${delay}s`;
+                dot.style.animationDuration = `${duration}s`;
+                
+                container.appendChild(dot);
+            }
+        }
+        
+        // Modal functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            createVolcanoDots();
+            
+            const orderBtn = document.getElementById('orderBtn');
+            const orderModal = document.getElementById('orderModal');
+            const closeModal = document.getElementById('closeModal');
+            const orderForm = document.getElementById('orderForm');
+            const successModal = document.getElementById('successModal');
+            const closeSuccessModal = document.getElementById('closeSuccessModal');
+            
+            // Open order modal
+            orderBtn.addEventListener('click', function() {
+                orderModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Close modals
+            closeModal.addEventListener('click', function() {
+                orderModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+            
+            closeSuccessModal.addEventListener('click', function() {
+                successModal.classList.remove('active');
+                orderModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+            
+            // Close modals when clicking outside
+            [orderModal, successModal].forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+            
+            // Form submission
+            orderForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+            
+                const formData = new FormData(orderForm);
+            
+                fetch('send_order.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network error');
+                    return response.text();
+                })
+                .then(result => {
+                    if (result.trim() === "OK") {
+                        orderModal.classList.remove('active');
+                        successModal.classList.add('active');
+                        orderForm.reset();
+                    } else {
+                        alert("Ошибка отправки заказа: " + result);
+                    }
+                })
+                .catch(() => {
+                    alert("Ошибка связи с сервером. Попробуйте позже.");
+                });
+            });
+
+        });
+    </script>
+    
+    <!-- PHP mailer script would go here in a separate file -->
+    <!-- Here's what the mailer.php would look like: -->
+    <!-- 
+    <?php
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $city = htmlspecialchars($_POST['city']);
+        $street = htmlspecialchars($_POST['street']);
+        $house = htmlspecialchars($_POST['house']);
+        $email = htmlspecialchars($_POST['email']);
+        $message = htmlspecialchars($_POST['message']);
+        
+        $to = "order@kamlava.ru";
+        $subject = "New KAMLAVA Order";
+        $body = "New order received:\n\n";
+        $body .= "City: $city\n";
+        $body .= "Street: $street\n";
+        $body .= "House: $house\n";
+        $body .= "Email: $email\n";
+        $body .= "Message: $message\n";
+        
+        $headers = "From: $email";
+        
+        if (mail($to, $subject, $body, $headers)) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false]);
+        }
+    }
+    ?>
+    -->
+</body>
+</html>
