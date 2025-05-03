@@ -1,25 +1,37 @@
 // Create floating volcano dots
 function createVolcanoDots() {
     const container = document.getElementById('volcano-dots');
-    const dotCount = 15;
+    const dotCount = 30; // Увеличили количество точек
+    
+    // Получаем размеры окна
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
     
     for (let i = 0; i < dotCount; i++) {
         const dot = document.createElement('div');
         dot.className = 'volcano-dot';
         
-        // Random position
-        const left = Math.random() * 100;
-        const bottom = Math.random() * 20;
-        const size = 2 + Math.random() * 3;
-        const delay = Math.random() * 5;
-        const duration = 3 + Math.random() * 4;
+        // Случайная позиция по всему экрану
+        const left = Math.random() * windowWidth;
+        const top = Math.random() * windowHeight;
         
-        dot.style.left = `${left}%`;
-        dot.style.bottom = `${bottom}%`;
+        // Разные размеры и анимация для каждой точки
+        const size = 2 + Math.random() * 4;
+        const delay = Math.random() * 5;
+        const duration = 5 + Math.random() * 5;
+        const opacity = 0.5 + Math.random() * 0.5;
+        
+        // Цвета от оранжевого до красного
+        const hue = 20 + Math.random() * 20; // 20-40 (оранжево-красные оттенки)
+        dot.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
+        
+        dot.style.left = `${left}px`;
+        dot.style.top = `${top}px`;
         dot.style.width = `${size}px`;
         dot.style.height = `${size}px`;
         dot.style.animationDelay = `${delay}s`;
         dot.style.animationDuration = `${duration}s`;
+        dot.style.opacity = opacity;
         
         container.appendChild(dot);
     }
